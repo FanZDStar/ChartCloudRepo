@@ -4,9 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
   <title>豆瓣电影数据分析网</title>
-  <meta content="" name="descriptison">
+  <meta content="" name="description">
   <meta content="" name="keywords">
 
   <!-- Favicons -->
@@ -14,9 +13,7 @@
   <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
   <link href="../static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -28,13 +25,6 @@
 
   <!-- Template Main CSS File -->
   <link href="../static/assets/css/style.css" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Mamba - v2.0.1
-  * Template URL: https://bootstrapmade.com/mamba-one-page-bootstrap-template-free/
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body>
@@ -51,7 +41,7 @@
         <a href="#" class="facebook"><i class="icofont-facebook"></i></a>
         <a href="#" class="instagram"><i class="icofont-instagram"></i></a>
         <a href="#" class="skype"><i class="icofont-skype"></i></a>
-        <a href="#" class="linkedin"><i class="icofont-linkedin"></i></i></a>
+        <a href="#" class="linkedin"><i class="icofont-linkedin"></i></a>
       </div>
     </div>
   </section>
@@ -59,13 +49,9 @@
   <!-- ======= Header ======= -->
   <header id="header">
     <div class="container">
-
       <div class="logo float-left">
         <h1 class="text-light"><a href="index.html"><span>MaMing</span></a></h1>
-        <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="index.html"><img src="../static/assets/img/logo.png" alt="" class="img-fluid"></a>-->
       </div>
-
       <nav class="nav-menu float-right d-none d-lg-block">
         <ul>
           <li class="active"><a href="/index">首页</a></li>
@@ -75,60 +61,62 @@
           <li><a href="/team">团队</a></li>
           <li><a href="/WordCloudTool">词云小工具</a></li>
         </ul>
-      </nav><!-- .nav-menu -->
-
+      </nav>
     </div>
-  </header><!-- End Header -->
+  </header>
 
-
-
-  <section id="about" class="about">
+  <!-- ======= Main Content ======= -->
+  <section id="about" class="about py-5">
     <div class="container">
-  
       <section id="wordcloud">
-        <div class="container">
+        <div class="text-center mb-4">
           <h2>词云生成工具</h2>
-          <form id="wordcloud-form" action="/WordCloudTool" method="POST">
-            <div class="form-group">
-              <label for="user-text">请输入文本内容：</label>
-              <textarea id="user-text" name="user_text" class="form-control" rows="5" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="stop-words">自定义停用词（每个词用逗号分隔）：</label>
-              <input type="text" id="stop-words" name="stop_words" class="form-control" placeholder="例如：的,了,是" />
-            </div>
-            <button type="submit" class="btn btn-primary">生成词云</button>
-          </form>
-          
-          <!-- 预留固定空间显示词云图 -->
-          <div id="wordcloud-image" style="margin-top: 20px;">
-            <img id="generated-wordcloud" src="" alt="生成的词云将显示在这里">
+          <p class="lead text-muted">生成属于你自己的词云，输入文本或上传文件，选择停用词，开始分析！</p>
+        </div>
+        <form id="wordcloud-form" action="/WordCloudTool" method="POST" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
+          <!-- Text area for user input -->
+          <div class="form-group mb-3">
+            <label for="user-text">请输入文本内容：</label>
+            <textarea id="user-text" name="user_text" class="form-control" rows="5" placeholder="请输入要生成词云的文本内容" required></textarea>
           </div>
+
+          <!-- File upload input -->
+          <div class="form-group mb-3">
+            <label for="user-file">或上传文本文件：</label>
+            <input type="file" id="user-file" name="user_file" class="form-control" accept=".txt" />
+          </div>
+
+          <!-- Custom stop words input -->
+          <div class="form-group mb-3">
+            <label for="stop-words">自定义停用词（每个词用逗号分隔）：</label>
+            <input type="text" id="stop-words" name="stop_words" class="form-control" placeholder="例如：的,了,是" />
+          </div>
+
+          <!-- Submit button -->
+          <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary btn-lg">生成词云</button>
+          </div>
+        </form>
+
+        <!-- Predefined space for displaying word cloud image -->
+        <div id="wordcloud-image" class="mt-5 text-center">
+          <img id="generated-wordcloud" src="" alt="生成的词云将显示在这里" class="img-fluid" style="max-width: 80%; height: auto;">
         </div>
       </section>
-  
     </div>
   </section>
-  
-  
-
-
 
   <!-- ======= Footer ======= -->
-  <footer id="footer">
+  <footer id="footer" class="text-center py-4">
     <div class="container">
       <div class="copyright">
         &copy; Copyright <strong><span>MaMing</span></strong>. All Rights Reserved
       </div>
       <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/mamba-one-page-bootstrap-template-free/ -->
         Designed by <a href="https://bootstrapmade.com/">Bootstrap</a>
       </div>
     </div>
-  </footer><!-- End Footer -->
+  </footer>
 
   <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
 
@@ -146,6 +134,30 @@
 
   <!-- Template Main JS File -->
   <script src="../static/assets/js/main.js"></script>
+
+  <!-- Custom JS for handling form logic -->
+  <script>
+    const textInput = document.getElementById("user-text");
+    const fileInput = document.getElementById("user-file");
+
+    // If text is entered, disable file input
+    textInput.addEventListener("input", function() {
+      if (textInput.value.trim()) {
+        fileInput.disabled = true;  // Disable file input if text is entered
+      } else {
+        fileInput.disabled = false;  // Enable file input if no text
+      }
+    });
+
+    // If a file is uploaded, disable text input
+    fileInput.addEventListener("change", function() {
+      if (fileInput.files.length > 0) {
+        textInput.disabled = true;  // Disable text input if file is selected
+      } else {
+        textInput.disabled = false;  // Enable text input if no file selected
+      }
+    });
+  </script>
 
 </body>
 

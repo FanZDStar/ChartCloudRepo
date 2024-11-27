@@ -2,8 +2,8 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-25 16:27:26
-FilePath: \Flask\app.py
+LastEditTime: 2024-11-27 20:24:02
+FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
 Copyright (c) 2024 by FanZDStar , All Rights Reserved. 
@@ -104,14 +104,16 @@ def WordCloudTool():
 def generate_wordcloud():
     user_text = request.form.get("user_text", "")
     stop_words_input = request.form.get("stop_words", "")
-    
-    if not user_text.strip():
-        return jsonify({"error": "文本不能为空"}), 400
+    user_file = request.files.get("user_file")
+
+    # 确保用户提供文本或者上传了文件
+    if not user_text.strip() and not user_file:
+        return jsonify({"error": "文本不能为空，或请上传文件"}), 400
 
     # 停用词处理：获取用户自定义的停用词列表
     stop_words = set([
-        "的", "了", "在", "是", "都", "与", "和", "对", "为", "一个", "就", "不", "有", "人", "都", "我们", "你", "这", "它", "我", "自己","电影",
-        "最","被","就是"
+        "的", "了", "在", "是", "都", "与", "和", "对", "为", "一个", "就", "不", "有", "人", "都", "我们", "你", "这", "它", "我", "自己", "电影",
+        "最", "被", "就是"
     ])
     
     # 如果用户有输入自定义停用词
@@ -119,8 +121,17 @@ def generate_wordcloud():
         custom_stop_words = stop_words_input.split(",")
         stop_words.update([word.strip() for word in custom_stop_words])
 
+    # 如果用户上传了文件，读取文件内容
+    if user_file:
+        try:
+            file_content = user_file.read().decode("utf-8")  # 文件解码
+        except UnicodeDecodeError:
+            return jsonify({"error": "文件解码失败，请上传UTF-8编码的文本文件"}), 400
+    else:
+        file_content = user_text
+
     # 分词并过滤停用词
-    cut = jieba.cut(user_text)
+    cut = jieba.cut(file_content)
     filtered_cut = [word for word in cut if word not in stop_words]
     string = ' '.join(filtered_cut)
 
@@ -138,7 +149,7 @@ def generate_wordcloud():
     output_path = "./static/assets/img/generated_wordcloud.jpg"
     wc.to_file(output_path)
 
-    # 返回图片路径
+    # 返回生成的词云图片
     return send_file(output_path, mimetype="image/jpeg")
 
 if __name__ == '__main__':

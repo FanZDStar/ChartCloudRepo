@@ -1395,11 +1395,11 @@ section {
 #wordcloud-image {
   margin-top: 20px;
   width: 100%;         /* 使显示区域宽度占满容器 */
-  max-width: 600px;    /* 设置最大宽度限制，避免图片区域过宽 */
+  max-width: 500px;    /* 设置最大宽度限制，避免图片区域过宽 */
   height: 400px;       /* 设置固定高度 */
   text-align: center;  /* 确保图片居中显示 */
   border: 1px solid #ddd; /* 可选：加个边框做区分 */
-  background-color: #f4f4f4; /* 可选：背景颜色 */
+  background-color: #fff; /* 可选：背景颜色 */
   display: none;       /* 初始时隐藏区域，图片加载后显示 */
 }
 
