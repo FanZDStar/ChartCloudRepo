@@ -25,6 +25,10 @@
 
   <!-- Template Main CSS File -->
   <link href="../static/assets/css/style.css" rel="stylesheet">
+
+  <!-- 引入 html2canvas 和 jsPDF -->
+  <script src="http://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -102,6 +106,12 @@
         <div id="wordcloud-image" class="mt-5 text-center">
           <img id="generated-wordcloud" src="" alt="生成的词云将显示在这里" class="img-fluid" style="max-width: 80%; height: auto;">
         </div>
+
+        <!-- 导出按钮 -->
+        <div class="text-center mt-4">
+          <button id="download-image" class="btn btn-success">下载图片</button>
+          <button id="download-pdf" class="btn btn-success">下载PDF</button>
+        </div>
       </section>
     </div>
   </section>
@@ -156,6 +166,36 @@
       } else {
         textInput.disabled = false;  // Enable text input if no file selected
       }
+    });
+
+    // 导出为图片
+    document.getElementById("download-image").addEventListener("click", function() {
+      const imgElement = document.getElementById("generated-wordcloud");
+
+      // 使用 html2canvas 获取该元素的画布
+      html2canvas(imgElement).then(function(canvas) {
+        const dataURL = canvas.toDataURL("image/png");
+
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = "wordcloud.png";
+        link.click();
+      });
+    });
+
+    // 导出为PDF
+    document.getElementById("download-pdf").addEventListener("click", function() {
+      const imgElement = document.getElementById("generated-wordcloud");
+
+      html2canvas(imgElement).then(function(canvas) {
+        const imgData = canvas.toDataURL("image/png");
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+        
+        pdf.addImage(imgData, 'PNG', 10, 10, 180, 160);  // 设置图片大小和位置
+        pdf.save("wordcloud.pdf");
+      });
     });
   </script>
 
