@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-28 11:29:02
+LastEditTime: 2024-11-28 19:59:30
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -202,6 +202,58 @@ def generate_wordcloud():
 
     # 返回生成的词云图片
     return send_file(output_path, mimetype="image/jpeg")
+
+
+@app.route("/review")
+def review():
+    return render_template("review.html")
+
+
+
+def get_db_connection():
+    conn = sqlite3.connect('movie.db')  # 连接到现有的 SQLite 数据库（movie.db）
+    conn.row_factory = sqlite3.Row  # 这样可以用字典方式访问每一行数据
+    return conn
+
+# 获取评论的路由
+@app.route('/get_review', methods=['GET'])
+def get_review():
+    conn = get_db_connection()
+    reviews = conn.execute('SELECT * FROM reviews ORDER BY timestamp DESC').fetchall()  # 获取所有评论，按时间倒序排列
+    conn.close()
+    
+    # 将评论转化为字典并返回 JSON 格式的数据
+    reviews_list = []
+    for review in reviews:
+        reviews_list.append({
+            'id': review['id'],
+            'username': review['username'],
+            'email': review['email'],
+            'comment': review['comment'],
+            'timestamp': review['timestamp']
+        })
+    
+    return jsonify(reviews_list)  # 返回评论数据的 JSON 格式
+
+# 提交评论的路由
+@app.route('/set_review', methods=['POST'])
+def set_review():
+    username = request.form['username']
+    email = request.form['email']
+    comment = request.form['comment']
+    
+    # 将评论插入数据库
+    conn = get_db_connection()
+    conn.execute('''
+        INSERT INTO reviews (username, email, comment) 
+        VALUES (?, ?, ?)
+    ''', (username, email, comment))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"message": "感谢您的精彩评论！"}), 200
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
