@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-28 10:28:37
+LastEditTime: 2024-11-28 11:29:02
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -20,16 +20,42 @@ import math
 
 app = Flask(__name__)
 
+# 创建数据库连接的函数
+def get_db_connection():
+    conn = sqlite3.connect('movie.db')  # 连接到现有的 SQLite 数据库（movie.db）
+    conn.row_factory = sqlite3.Row  # 这样可以用字典方式访问每一行数据
+    return conn
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-
 @app.route("/index")
 def home():
-    # return render_template("index.html")
     return index()
+
+
+
+@app.route("/get_feedback")
+def get_feedback():
+    conn = get_db_connection()
+    # 假设表名为 feedback
+    feedbacks = conn.execute('SELECT name, email, feedback, timestamp FROM feedback').fetchall()
+    print("成功")
+    conn.close()
+    
+    # 将反馈数据格式化为字典列表
+    feedback_list = [
+        {
+            'user_name': feedback['name'],
+            'feedback_text': feedback['feedback'],
+            'submitted_at': feedback['timestamp'] if isinstance(feedback['timestamp'], str) else feedback['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+        }
+        for feedback in feedbacks
+    ]
+    print(feedback_list)
+    # 返回 JSON 格式的数据
+    return jsonify(feedback_list)
 
 @app.route("/movie")
 def movie():
@@ -64,12 +90,6 @@ def movie():
         page=page,
         total_pages=total_pages
     )
-    
-
-
-
-
-
 
 @app.route("/score")
 def score():
@@ -84,8 +104,7 @@ def score():
         num.append(item[1])
     cur.close()
     con.close()
-    return render_template("score.html",score=score,num = num)
-
+    return render_template("score.html", score=score, num=num)
 
 @app.route("/word")
 def word():
@@ -95,17 +114,38 @@ def word():
 def team():
     return render_template("team.html")
 
-@app.route('/submit-feedback',methods=['POST'])
+# 提交反馈路由
+@app.route('/submit-feedback', methods=['POST'])
 def submit_feedback():
     name = request.form.get('name')
     email = request.form.get('email')
     feedback = request.form.get('feedback')
 
-    print(f"Feedback received: Name: {name}, Email: {email}, Feedback: {feedback}")
+    if name and email and feedback:
+        try:
+            # 获取数据库连接
+            conn = get_db_connection()
+            c = conn.cursor()
+            # 插入反馈数据到 feedback 表
+            c.execute('''
+                INSERT INTO feedback (name, email, feedback)
+                VALUES (?, ?, ?)
+            ''', (name, email, feedback))
 
-    return "感谢您的反馈！我们会尽快处理"
+            # 提交事务并关闭连接
+            conn.commit()
+            conn.close()
+            # 输出反馈数据（在实际应用中，你可能想存储或处理这些数据）
+            print(f"Feedback received: Name: {name}, Email: {email}, Feedback: {feedback}")
 
+    # 返回一个JSON响应
+            return jsonify({"message": "感谢您的反馈！我们会尽快处理"}), 200
+        except sqlite3.Error as e:
+            # 如果数据库操作失败，返回错误信息
+            return f"数据库错误：{e}"
 
+    else:
+        return "提交失败，请填写所有字段。"
 
 @app.route("/WordCloudTool")
 def WordCloudTool():
@@ -122,7 +162,7 @@ def generate_wordcloud():
         return jsonify({"error": "文本不能为空，或请上传文件"}), 400
 
     # 停用词处理：获取用户自定义的停用词列表
-    stop_words = set([
+    stop_words = set([ 
         "的", "了", "在", "是", "都", "与", "和", "对", "为", "一个", "就", "不", "有", "人", "都", "我们", "你", "这", "它", "我", "自己", "电影",
         "最", "被", "就是"
     ])

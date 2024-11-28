@@ -148,6 +148,22 @@
   </section><!-- End Our Team Section -->
 
 
+  <!-- ======= User Feedback Section ======= -->
+  <section id="feedback" class="feedback">
+    <div class="container">
+      <div class="section-title">
+        <h2>用户反馈</h2>
+        <p>查看其他用户的反馈，分享您的意见。</p>
+      </div>
+
+      <div id="feedback-list">
+        <!-- 用户反馈内容将通过 JavaScript 动态加载 -->
+      </div>
+    </div>
+  </section><!-- End User Feedback Section -->
+
+
+
   <!-- ======= Footer ======= -->
   <footer id="footer">
     <div class="footer-top">
@@ -222,6 +238,39 @@
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+
+  <script>
+    // JavaScript to dynamically load user feedback
+    window.onload = function () {
+      fetch('/get_feedback')  // 确保前端调用的是正确的接口
+        .then(response => response.json())
+        .then(data => {
+          console.log('Fetched data:', data);  // 输出获取到的数据
+          const feedbackList = document.getElementById('feedback-list');
+          console.log('Feedback List Element:', feedbackList);  // 确认反馈列表容器
+
+          data.forEach(feedback => {
+            const feedbackItem = document.createElement('div');
+            feedbackItem.classList.add('feedback-item');
+            feedbackItem.innerHTML = `
+              <h4>${feedback.user_name}</h4>
+              <p>${feedback.feedback_text}</p>
+              <small>${feedback.submitted_at}</small>
+            `;
+            console.log('Generated feedback item HTML:', feedbackItem.innerHTML);  // 输出生成的 HTML
+            feedbackList.appendChild(feedbackItem);
+          });
+        })
+        .catch(error => {
+          console.error('Error loading feedback:', error);
+        });
+    }
+  </script>
+
+
+
+
 
   <!-- Vendor JS Files -->
   <script src="../static/assets/vendor/jquery/jquery.min.js"></script>

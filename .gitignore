@@ -8,4 +8,4 @@ movie.db
 test.py
 package-lock.json
 package.json
-generated_wordcloud.jpg
+static/assets/img/generated_wordcloud.jpg
