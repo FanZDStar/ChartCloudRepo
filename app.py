@@ -53,7 +53,7 @@ def get_feedback():
         }
         for feedback in feedbacks
     ]
-    print(feedback_list)
+    #print(feedback_list)
     # 返回 JSON 格式的数据
     return jsonify(feedback_list)
 

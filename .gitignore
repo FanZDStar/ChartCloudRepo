@@ -2,10 +2,10 @@
 /.idea
 /venv
 /node_modules
+/static/assets/img/generated_wordcloud.jpg
 
 # file 不需要提交的文件
 movie.db
 test.py
 package-lock.json
 package.json
-static/assets/img/generated_wordcloud.jpg
