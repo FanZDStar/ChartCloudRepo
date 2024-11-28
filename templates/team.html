@@ -88,7 +88,7 @@
 
     <div class="section-title">
       <h2>Our Team</h2>
-      <p>我们是猫猫四人帮！喵呜~</p>
+      <p>我们是ourEDA四喵帮!喵呜~</p>
     </div>
 
     <div class="row">
@@ -162,6 +162,38 @@
   </div>
 </section><!-- End Our Team Section -->
 
+<!-- ======= Feedback Section ======= -->
+<section id="feedback" class="feedback">
+  <div class="container">
+    <div class="section-title">
+      <h2>用户反馈</h2>
+      <p>请留下您的宝贵意见和反馈，我们将不断改进！</p>
+    </div>
+
+    <form id="feedbackForm" method="POST" action="/submit-feedback">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="name">姓名</label>
+            <input type="text" id="name" name="name" class="form-control" required placeholder="请输入您的姓名">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="email">电子邮件</label>
+            <input type="email" id="email" name="email" class="form-control" required placeholder="请输入您的电子邮件">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="feedback">反馈内容</label>
+        <textarea id="feedback" name="feedback" class="form-control" rows="5" required placeholder="请输入您的反馈"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">提交反馈</button>
+    </form>
+
+  </div>
+</section><!-- End Feedback Section -->
 
 
 

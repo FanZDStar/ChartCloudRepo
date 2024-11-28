@@ -1,7 +1,11 @@
 # dir 不需要提交的目录
 /.idea
 /venv
+/node_modules
 
 # file 不需要提交的文件
 movie.db
 test.py
+package-lock.json
+package.json
+generated_wordcloud.jpg

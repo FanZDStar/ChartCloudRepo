@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-27 20:24:02
+LastEditTime: 2024-11-28 10:28:37
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -94,6 +94,17 @@ def word():
 @app.route("/team")
 def team():
     return render_template("team.html")
+
+@app.route('/submit-feedback',methods=['POST'])
+def submit_feedback():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    feedback = request.form.get('feedback')
+
+    print(f"Feedback received: Name: {name}, Email: {email}, Feedback: {feedback}")
+
+    return "感谢您的反馈！我们会尽快处理"
+
 
 
 @app.route("/WordCloudTool")
