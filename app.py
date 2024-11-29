@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-29 16:37:32
+LastEditTime: 2024-11-29 21:21:50
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -91,24 +91,24 @@ def movie():
         total_pages=total_pages
     )
 
-# @app.route("/score")
-# def score():
-#     score = []  #评分
-#     num = []    #每个评分统计出的电影数量
-#     con = sqlite3.connect("movie.db")
-#     cur = con.cursor()
-#     sql = 'select score,count(score) from movie250 group by score'
-#     data = cur.execute(sql)
-#     for item in data:
-#         score.append(item[0])
-#         num.append(item[1])
-#     cur.close()
-#     con.close()
-#     return render_template("score.html", score=score, num=num)
+@app.route("/score")
+def score():
+    score = []  #评分
+    num = []    #每个评分统计出的电影数量
+    con = sqlite3.connect("movie.db")
+    cur = con.cursor()
+    sql = 'select score,count(score) from movie250 group by score'
+    data = cur.execute(sql)
+    for item in data:
+        score.append(item[0])
+        num.append(item[1])
+    cur.close()
+    con.close()
+    return render_template("score.html", score=score, num=num)
 
-@app.route("/word")
-def word():
-    return render_template("word.html")
+# @app.route("/word")
+# def word():
+#     return render_template("word.html")
 
 @app.route("/team")
 def team():

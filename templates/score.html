@@ -56,7 +56,7 @@
     </div>
   </section>
 
-  
+
 
 
   <!-- ======= Header ======= -->
@@ -73,8 +73,7 @@
         <ul>
           <li><a href="/index">首页</a></li>
           <li><a href="/movie">电影</a></li>
-          <li class="active"><a href="/score">评分</a></li>
-          <li><a href="/word">词云</a></li>
+          <li class="active"><a href="/score">数据处理</a></li>
           <li><a href="/team">团队</a></li>
           <li><a href="/WordCloudTool">词云小工具</a></li>
           <li><a href="/review">电影评论区</a></li>
@@ -97,7 +96,7 @@
       <!-- ======= Counts Section ======= -->
       <section class="counts section-bg">
         <div class="container">
-          <div id="main" style="width: 600px;height:400px;"></div>
+          <div id="main" style="width: 100%;height:300px;"></div>
         </div>
       </section><!-- End Counts Section -->
 
@@ -113,39 +112,67 @@
       title: {
         text: '电影评分表'
       },
-      color:"#3398DB",
+      color: "#3398DB",
       tooltip: {
-        trigger:'axis',
-        axisPointer:{
-          type:'shadow'
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
         }
       },
-      grid:{
-        left:'3%',
-        right:'4%',
-        bottom:"3%",
-        containLabel:true
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: "3%",
+        containLabel: true
       },
       xAxis: {
-        type:'category',
-        data: {{score}}
+        type: 'category',
+        data: {{ score }}
       },
-      yAxis: {
-        type:'value'
-      },
-      series: [
-        {
-          barWidth:'60%',
-          type: 'bar',
-          data: {{num}}
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        barWidth: '60%',
+        type: 'bar',
+        data: {{ num }}
         }
-      ]
+    ]
     };
 
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
   </script>
 
+
+
+  <section id="about" class="about">
+    <div class="container">
+
+      <div class="row no-gutters">
+        <div class="col-lg-6 video-box">
+          <img src="../static/assets/img/wordCloud.jpg" class="img-fluid" alt="">
+        </div>
+
+        <div class="col-lg-6 d-flex flex-column justify-content-center about-content">
+
+          <div class="section-title">
+            <h2>词频统计</h2>
+            <p><a href="/WordCloudTool">想做出自己的词云图嘛？</a></p>
+          </div>
+
+          <div class="icon-box" data-aos="fade-up" data-aos-delay="100">
+            <div class="icon"><i class="bx bx-fingerprint"></a></i></div>
+            <h4 class="title"><a href="/movie">关于电影</a></h4>
+            <p class="description">有什么感悟呢</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section><!-- End About Us Section -->
 
   <!-- ======= Footer ======= -->
   <footer id="footer">
