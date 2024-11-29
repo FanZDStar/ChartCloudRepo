@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-28 19:59:30
+LastEditTime: 2024-11-29 16:37:32
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -91,20 +91,20 @@ def movie():
         total_pages=total_pages
     )
 
-@app.route("/score")
-def score():
-    score = []  #评分
-    num = []    #每个评分统计出的电影数量
-    con = sqlite3.connect("movie.db")
-    cur = con.cursor()
-    sql = 'select score,count(score) from movie250 group by score'
-    data = cur.execute(sql)
-    for item in data:
-        score.append(item[0])
-        num.append(item[1])
-    cur.close()
-    con.close()
-    return render_template("score.html", score=score, num=num)
+# @app.route("/score")
+# def score():
+#     score = []  #评分
+#     num = []    #每个评分统计出的电影数量
+#     con = sqlite3.connect("movie.db")
+#     cur = con.cursor()
+#     sql = 'select score,count(score) from movie250 group by score'
+#     data = cur.execute(sql)
+#     for item in data:
+#         score.append(item[0])
+#         num.append(item[1])
+#     cur.close()
+#     con.close()
+#     return render_template("score.html", score=score, num=num)
 
 @app.route("/word")
 def word():
@@ -230,10 +230,12 @@ def get_review():
             'username': review['username'],
             'email': review['email'],
             'comment': review['comment'],
-            'timestamp': review['timestamp']
+            'timestamp': review['timestamp'],
+            'likes': review['likes']  # 加入点赞数
         })
     
     return jsonify(reviews_list)  # 返回评论数据的 JSON 格式
+
 
 # 提交评论的路由
 @app.route('/set_review', methods=['POST'])
@@ -242,16 +244,38 @@ def set_review():
     email = request.form['email']
     comment = request.form['comment']
     
-    # 将评论插入数据库
+    # 将评论插入数据库，并设置初始点赞数为 0
     conn = get_db_connection()
     conn.execute('''
-        INSERT INTO reviews (username, email, comment) 
-        VALUES (?, ?, ?)
-    ''', (username, email, comment))
+        INSERT INTO reviews (username, email, comment, likes) 
+        VALUES (?, ?, ?, ?)
+    ''', (username, email, comment, 0))  # 新评论的初始点赞数为 0
     conn.commit()
     conn.close()
     
     return jsonify({"message": "感谢您的精彩评论！"}), 200
+
+#点赞路由
+@app.route('/like_review/<int:review_id>', methods=['POST'])
+def like_review(review_id):
+    conn = get_db_connection()
+
+    # 获取当前评论的点赞数
+    review = conn.execute('SELECT likes FROM reviews WHERE id = ?', (review_id,)).fetchone()
+
+    if review:
+        # 增加一个点赞
+        new_likes = review['likes'] + 1
+        conn.execute('UPDATE reviews SET likes = ? WHERE id = ?', (new_likes, review_id))
+        conn.commit()
+        conn.close()
+        # print(f"Updated likes for review {review_id}: {new_likes}")  # 打印更新日志
+        return jsonify({"message": "点赞成功!"}), 200
+    else:
+        conn.close()
+        return jsonify({"message": "评论未找到!"}), 404
+
+
 
 
 

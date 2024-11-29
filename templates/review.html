@@ -13,7 +13,8 @@
     <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900"
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900"
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
@@ -168,19 +169,22 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="username">姓名</label>
-                            <input type="text" id="username" class="form-control" name="username" placeholder="请输入您的姓名" required>
+                            <input type="text" id="username" class="form-control" name="username" placeholder="请输入您的姓名"
+                                required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="email">邮箱</label>
-                            <input type="email" id="email" class="form-control" name="email" placeholder="请输入您的邮箱" required>
+                            <input type="email" id="email" class="form-control" name="email" placeholder="请输入您的邮箱"
+                                required>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="comment">评论内容</label>
-                    <textarea id="comment" class="form-control" name="comment" rows="5" placeholder="写下您的评论..." required></textarea>
+                    <textarea id="comment" class="form-control" name="comment" rows="5" placeholder="写下您的评论..."
+                        required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">提交评论</button>
             </form>
@@ -225,57 +229,69 @@
                 .then(data => {
                     let feedbackList = document.getElementById('feedback-list');
                     feedbackList.innerHTML = '';  // 清空现有的评论
-    
+
                     // 遍历所有评论并添加到页面
-                    data.forEach(function(review) {
+                    data.forEach(function (review) {
                         let feedbackItem = document.createElement('div');
                         feedbackItem.classList.add('feedback-item');
                         feedbackItem.innerHTML = `
-                            <div class="user-avatar">
-                                ${review.username.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <h4>${review.username}</h4>
-                                <p>${review.comment}</p>
-                                <small>${review.email}</small>
-                                <div class="timestamp">${review.timestamp}</div>
-                            </div>
-                        `;
+                    <div>
+                        <h4>${review.username}</h4>
+                        <p>${review.comment}</p>
+                        <small>${review.email}</small>
+                        <div class="timestamp">${review.timestamp}</div>
+                        <button class="btn btn-link" onclick="likeReview(${review.id})">
+                            点赞 (${review.likes})
+                        </button>
+                    </div>
+                `;
                         feedbackList.appendChild(feedbackItem);
                     });
                 })
                 .catch(error => console.error('Error loading reviews:', error));
         }
-    
+        // 点赞函数
+        function likeReview(reviewId) {
+            fetch(`/like_review/${reviewId}`, {  // 向后端发送点赞请求
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);  // 提示点赞成功
+                    loadReviews();  // 刷新评论列表，显示更新后的点赞数
+                })
+                .catch(error => console.error('Error liking review:', error));
+        }
+
         // 提交评论后更新评论列表
         document.getElementById('review-form').addEventListener('submit', function (e) {
             e.preventDefault();  // 阻止默认表单提交行为
-    
+
             let username = document.getElementById('username').value;
             let email = document.getElementById('email').value;
             let comment = document.getElementById('comment').value;
-    
+
             // 使用 AJAX 提交评论
             let formData = new FormData();
             formData.append('username', username);
             formData.append('email', email);
             formData.append('comment', comment);
-    
+
             fetch('/set_review', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                // 提交成功后，显示感谢信息并刷新评论列表
-                alert(data.message);  // 提示提交成功
-    
-                loadReviews();  // 刷新评论列表
-                document.getElementById('review-form').reset();  // 清空评论表单
-            })
-            .catch(error => console.error('Error submitting review:', error));
+                .then(response => response.json())
+                .then(data => {
+                    // 提交成功后，显示感谢信息并刷新评论列表
+                    alert(data.message);  // 提示提交成功
+
+                    loadReviews();  // 刷新评论列表
+                    document.getElementById('review-form').reset();  // 清空评论表单
+                })
+                .catch(error => console.error('Error submitting review:', error));
         });
-    
+
         // 返回顶部按钮
         window.onscroll = function () {
             if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
@@ -284,13 +300,13 @@
                 document.querySelector('.back-to-top').style.display = 'none';
             }
         };
-    
+
         // 页面加载时获取并显示评论
         window.onload = function () {
             loadReviews();
         };
     </script>
-    
+
 
 </body>
 
