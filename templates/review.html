@@ -26,7 +26,7 @@
     <!-- Template Main CSS File -->
     <link href="../static/assets/css/style.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/emoji-picker-react@4.12.0/dist/index.min.js"></script>
-    
+
     <style>
         /* 自定义样式 */
         .movie-review {
@@ -114,6 +114,46 @@
         .back-to-top:hover {
             background-color: #0056b3;
         }
+
+        /* 优化评论排序按钮的样式，使其更接近Bilibili风格 */
+        .review-sorting {
+            display: flex;
+            gap: 8px;
+            /* 按钮之间的间距 */
+        }
+
+        .review-sorting .btn-sort {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #007bff;
+            background-color: #fff;
+            border: none;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .review-sorting .btn-sort:hover {
+            background-color: #f8f9fa;
+        }
+
+        .review-sorting .btn-sort.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .review-sorting .btn-sort:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        /* 确保标题和按钮在同一行 */
+        .d-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -183,18 +223,26 @@
                 </div>
                 <div class="form-group">
                     <label for="comment">评论内容</label>
-                    <textarea id="comment" class="form-control" name="comment" rows="5" placeholder="写下您的评论..."
-                        required></textarea>
+                    <textarea id="comment" class="form-control" name="comment" rows="5"
+                        placeholder="写下您的评论...使用类似于_smile_来输入你的表情包叭" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">提交评论</button>
             </form>
 
             <div class="reviews-section mt-5">
-                <h3>最新评论</h3>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>最新评论</h3>
+                    <div class="review-sorting">
+                        <button id="sort-time" class="btn btn-sort active">≡最新</button>
+                        <button id="sort-likes" class="btn btn-sort">≡最热</button>
+                    </div>
+                </div>
                 <div id="feedback-list">
                     <!-- 用户反馈内容将通过 JavaScript 动态加载 -->
                 </div>
             </div>
+
+
         </div>
     </section><!-- End Movie Review Section -->
 
@@ -222,11 +270,53 @@
 
     <!-- Custom JS for handling form submission and dynamic loading of feedback -->
     <script>
+        let currentSort = 'time';  // 默认按时间排序
+
+        // 根据评论的时间排序
+        function sortByTime(a, b) {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        }
+
+        // 根据点赞数排序
+        function sortByLikes(a, b) {
+            return b.likes - a.likes;
+        }
+
+
+        const emojiMap = {
+            "_smile_": "😊",   // 用表情符号替代
+            "_laugh_": "😂",
+            "_heart_": "❤️",
+            "_wink_": "😉",
+            "_sad_": "😢",
+            "_赞_": "👍",
+            "_踩_": "👎"
+        };
+        function convertTextToEmoji(text) {
+            // 遍历表情映射对象，替换文本中的表情符号标记
+            for (let key in emojiMap) {
+                text = text.replace(new RegExp(key, 'g'), emojiMap[key]);
+            }
+            return text;
+        }
+
+
+
+
+
+
         // 获取评论并展示最新评论
         function loadReviews() {
             fetch('/get_review')  // 发起 GET 请求获取评论数据
                 .then(response => response.json())
                 .then(data => {
+                    // 根据当前选择的排序方式排序
+                    if (currentSort === 'time') {
+                        data.sort(sortByTime);  // 按时间排序
+                    } else if (currentSort === 'likes') {
+                        data.sort(sortByLikes);  // 按点赞排序
+                    }
+
                     let feedbackList = document.getElementById('feedback-list');
                     feedbackList.innerHTML = '';  // 清空现有的评论
 
@@ -237,7 +327,7 @@
                         feedbackItem.innerHTML = `
                     <div>
                         <h4>${review.username}</h4>
-                        <p>${review.comment}</p>
+                        <p>${convertTextToEmoji(review.comment)}</p>  <!-- 使用转换函数 -->
                         <small>${review.email}</small>
                         <div class="timestamp">${review.timestamp}</div>
                         <button class="btn btn-link" onclick="likeReview(${review.id})">
@@ -263,13 +353,15 @@
                 .catch(error => console.error('Error liking review:', error));
         }
 
-        // 提交评论后更新评论列表
         document.getElementById('review-form').addEventListener('submit', function (e) {
             e.preventDefault();  // 阻止默认表单提交行为
 
             let username = document.getElementById('username').value;
             let email = document.getElementById('email').value;
             let comment = document.getElementById('comment').value;
+
+            // 在提交前将评论中的表情符号标记转换为表情图标
+            comment = convertTextToEmoji(comment);
 
             // 使用 AJAX 提交评论
             let formData = new FormData();
@@ -292,6 +384,7 @@
                 .catch(error => console.error('Error submitting review:', error));
         });
 
+
         // 返回顶部按钮
         window.onscroll = function () {
             if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
@@ -300,6 +393,30 @@
                 document.querySelector('.back-to-top').style.display = 'none';
             }
         };
+        // 排序按钮点击事件
+        document.getElementById('sort-time').addEventListener('click', function () {
+            currentSort = 'time';  // 设置为按时间排序
+            loadReviews();  // 刷新评论列表
+        });
+
+        document.getElementById('sort-likes').addEventListener('click', function () {
+            currentSort = 'likes';  // 设置为按点赞排序
+            loadReviews();  // 刷新评论列表
+        });
+
+
+        document.getElementById('sort-time').addEventListener('click', function () {
+            document.getElementById('sort-time').classList.add('active');
+            document.getElementById('sort-likes').classList.remove('active');
+            // 这里可以添加根据时间排序的逻辑
+        });
+
+        document.getElementById('sort-likes').addEventListener('click', function () {
+            document.getElementById('sort-likes').classList.add('active');
+            document.getElementById('sort-time').classList.remove('active');
+            // 这里可以添加根据点赞数排序的逻辑
+        });
+
 
         // 页面加载时获取并显示评论
         window.onload = function () {
