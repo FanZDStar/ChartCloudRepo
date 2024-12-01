@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-12-01 12:27:10
+LastEditTime: 2024-12-01 13:56:54
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -292,7 +292,9 @@ def like_review(review_id):
         return jsonify({"message": "评论未找到!"}), 404
 
 
-
+@app.route("/preview")
+def preview():
+    return render_template('preview.html')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <script src="../static/echarts.min.js"></script>
+    <title>豆瓣电影数据分析网</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="../static/assets/img/favicon.png" rel="icon">
+    <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="../static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/venobox/venobox.css" rel="stylesheet">
+    <link href="../static/assets/vendor/aos/aos.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="../static/assets/css/style.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/marked/0.8.1/marked.min.js"></script>
+
+    <style>
+        /* 美化页面 */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        #markdown-preview {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 12px;
+            font-size: 14px;
+            box-shadow: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        #markdown-output {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 20px;
+            background-color: #f9f9f9;
+            min-height: 300px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 50px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            display: none;
+        }
+
+        .back-to-top:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        footer .credits a {
+            color: #6c757d;
+        }
+
+        .download-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ======= Top Bar ======= -->
+    <section id="topbar" class="d-none d-lg-block">
+        <div class="container clearfix">
+            <div class="contact-info float-left">
+                <i class="icofont-envelope"></i><a href="mailto:hujunyang_1@163.com">hujunyang_1@163.com</a>
+                <i class="icofont-phone"></i> +86 15942630128
+            </div>
+            <div class="social-links float-right">
+                <a href="#" class="twitter"><i class="icofont-twitter"></i></a>
+                <a href="#" class="facebook"><i class="icofont-facebook"></i></a>
+                <a href="#" class="instagram"><i class="icofont-instagram"></i></a>
+                <a href="#" class="skype"><i class="icofont-skype"></i></a>
+                <a href="#" class="linkedin"><i class="icofont-linkedin"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======= Header ======= -->
+    <header id="header">
+        <div class="container">
+            <div class="logo float-left">
+                <h1 class="text-light"><a href="index.html"><span>MaMing</span></a></h1>
+            </div>
+            <nav class="nav-menu float-right d-none d-lg-block">
+                <ul>
+                    <li><a href="/index">←返回首页</a></li>
+                </ul>
+            </nav><!-- .nav-menu -->
+        </div>
+    </header><!-- End Header -->
+
+    <!-- ======= Markdown Preview Section ======= -->
+    <section id="markdown-preview" class="container mt-5">
+        <h2>Markdown 在线预览</h2>
+
+        <!-- Markdown Textarea (Input area for user to write Markdown) -->
+        <div class="form-group">
+            <textarea id="markdown-input" class="form-control" rows="10" placeholder="请输入Markdown格式文本"></textarea>
+            <div class="form-group d-flex align-items-center">
+                <select id="font-select" class="form-control ml-2" style="width: 180px; font-size: 11px; height: 40px;">
+                    <option value="Arial">Arial</option>
+                    <option value="Courier New">Courier New</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Verdana">Verdana</option>
+                </select>
+
+                <button id="download-btn" class="download-btn ml-3">下载 Markdown 文件</button>
+            </div>
+
+
+
+        </div>
+
+        <!-- Preview Area (The converted HTML will be displayed here) -->
+        <h4>预览：</h4>
+        <div id="markdown-output" class="border p-3" style="min-height: 300px;"></div>
+
+        <!-- Download Button -->
+
+    </section>
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer">
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright <strong><span>MaMing</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            </div>
+        </div>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="../static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/assets/vendor/jquery.easing/jquery.easing.min.js"></script>
+    <script src="../static/assets/vendor/php-email-form/validate.js"></script>
+    <script src="../static/assets/vendor/jquery-sticky/jquery.sticky.js"></script>
+    <script src="../static/assets/vendor/venobox/venobox.min.js"></script>
+    <script src="../static/assets/vendor/waypoints/jquery.waypoints.min.js"></script>
+    <script src="../static/assets/vendor/counterup/counterup.min.js"></script>
+    <script src="../static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="../static/assets/vendor/aos/aos.js"></script>
+
+    <!-- Template Main JS File -->
+    <script src="../static/assets/js/main.js"></script>
+
+    <!-- Markdown Preview JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const markdownInput = document.getElementById('markdown-input');
+            const markdownOutput = document.getElementById('markdown-output');
+            const fontSelect = document.getElementById('font-select');
+
+            // 监听字体选择变化，更新 textarea 的字体
+            fontSelect.addEventListener('change', function () {
+                markdownInput.style.fontFamily = fontSelect.value;
+            });
+
+            // 监听输入事件并更新预览
+            markdownInput.addEventListener('input', function () {
+                const markdownText = markdownInput.value;
+                const htmlContent = marked(markdownText);
+                markdownOutput.innerHTML = htmlContent;
+            });
+
+            // 下载 Markdown 文件
+            document.getElementById('download-btn').addEventListener('click', function () {
+                const markdownText = markdownInput.value;
+                const blob = new Blob([markdownText], { type: 'text/markdown' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'markdown.md';
+                link.click();
+            });
+        });
+    </script>
+</body>
+
+</html>
