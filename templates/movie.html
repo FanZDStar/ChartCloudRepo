@@ -69,7 +69,7 @@
       <nav class="nav-menu float-right d-none d-lg-block">
         <ul>
           <li><a href="/index">首页</a></li>
-          <li  class="active"><a href="/movie">电影</a></li>
+          <li class="active"><a href="/movie">电影</a></li>
           <li><a href="/score">数据处理</a></li>
           <li><a href="/team">团队</a></li>
           <li><a href="/WordCloudTool">词云小工具</a></li>
@@ -88,90 +88,109 @@
   <section id="team" class="team">
     <div class="container">
 
-        <div class="section-title">
-            <h2>豆瓣电影Top250</h2>
+      <div class="section-title">
+        <h2>豆瓣电影Top250</h2>
+      </div>
+
+      <form method="GET" action="/movie">
+        <div class="form-group">
+          <input type="text" class="form-control" id="search" name="search" placeholder="请输入电影名称"
+            value="{{ request.args.get('search', '') }}" style="width: 300px;">
         </div>
+        <button type="submit" class="btn btn-primary">搜索</button>
+      </form>
 
-        <!-- ======= Counts Section ======= -->
-        <section class="counts section-bg">
-            <div class="container">
+      <!-- ======= Counts Section ======= -->
+      <section class="counts section-bg">
+        <div class="container">
 
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>排名</th>
-                            <th>电影中文名称</th>
-                            <th>电影外国名称</th>
-                            <th>评分</th>
-                            <th>评价人数</th>
-                            <th>一句话描述</th>
-                            <th>其他信息</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for movie in movies %}
-                        <tr>
-                            <td>{{ movie[0] }}</td>
-                            <td>
-                                <a href="{{ movie[1] }}" target="_blank">{{ movie[3] }}</a>
-                            </td>
-                            <td>{{ movie[4] }}</td>
-                            <td>{{ movie[5] }}</td>
-                            <td>{{ movie[6] }}</td>
-                            <td>{{ movie[7] }}</td>
-                            <td>{{ movie[8] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>排名</th>
+                <th>电影中文名称</th>
+                <th>电影外国名称</th>
+                <th>评分</th>
+                <th>评价人数</th>
+                <th>一句话描述</th>
+                <th>其他信息</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for movie in movies %}
+              <tr>
+                <td>{{ movie[0] }}</td>
+                <td>
+                  <a href="{{ movie[1] }}" target="_blank">{{ movie[3] }}</a>
+                </td>
+                <td>{{ movie[4] }}</td>
+                <td>{{ movie[5] }}</td>
+                <td>{{ movie[6] }}</td>
+                <td>{{ movie[7] }}</td>
+                <td>{{ movie[8] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
 
-                <!-- 分页导航 -->
-                <nav class="pagination-container">
-                  <ul class="pagination justify-content-center">
-                      <!-- 上一页按钮 -->
-                      {% if page > 1 %}
-                      <li class="page-item">
-                          <a class="page-link" href="/movie?page={{ page - 1 }}" aria-label="Previous">
-                              <span aria-hidden="true">&laquo;</span> 上一页
-                          </a>
-                      </li>
-                      {% else %}
-                      <li class="page-item disabled">
-                          <a class="page-link" href="#" aria-label="Previous">
-                              <span aria-hidden="true">&laquo;</span> 上一页
-                          </a>
-                      </li>
-                      {% endif %}
-              
-                      <!-- 页码按钮 -->
-                      {% for p in range(1, total_pages + 1) %}
-                      <li class="page-item {% if p == page %}active{% endif %}">
-                          <a class="page-link" href="/movie?page={{ p }}">{{ p }}</a>
-                      </li>
-                      {% endfor %}
-              
-                      <!-- 下一页按钮 -->
-                      {% if page < total_pages %}
-                      <li class="page-item">
-                          <a class="page-link" href="/movie?page={{ page + 1 }}" aria-label="Next">
-                              下一页 <span aria-hidden="true">&raquo;</span>
-                          </a>
-                      </li>
-                      {% else %}
-                      <li class="page-item disabled">
-                          <a class="page-link" href="#" aria-label="Next">
-                              下一页 <span aria-hidden="true">&raquo;</span>
-                          </a>
-                      </li>
-                      {% endif %}
-                  </ul>
-              </nav>
-              
-            </div>
-        </section><!-- End Counts Section -->
+          <!-- 分页导航 -->
+          <nav class="pagination-container">
+            <ul class="pagination justify-content-center">
+              <!-- 上一页按钮 -->
+              {% if page > 1 %}
+              <li class="page-item">
+                <a class="page-link" href="/movie?page={{ page - 1 }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% endif %}
+
+              <!-- 当前页和相邻页码 -->
+              {% if page > 2 %}
+              <li class="page-item"><a class="page-link" href="/movie?page=1">1</a></li>
+              <li class="page-item disabled"><span class="page-link">...</span></li>
+              {% endif %}
+
+              {% for p in range(page - 1, page + 2) %}
+              {% if p > 0 and p <= total_pages %} <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="/movie?page={{ p }}">{{ p }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page < total_pages - 1 %} <li class="page-item disabled"><span class="page-link">...</span></li>
+                  <li class="page-item"><a class="page-link" href="/movie?page={{ total_pages }}">{{ total_pages }}</a>
+                  </li>
+                  {% endif %}
+
+                  <!-- 下一页按钮 -->
+                  {% if page < total_pages %} <li class="page-item">
+                    <a class="page-link" href="/movie?page={{ page + 1 }}" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                    {% endif %}
+            </ul>
+          </nav>
+
+
+        </div>
+      </section><!-- End Counts Section -->
 
     </div>
-</section>
+  </section>
 
 
 

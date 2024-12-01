@@ -2,7 +2,7 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-11-29 21:21:50
+LastEditTime: 2024-12-01 12:27:10
 FilePath: \ChartCloudRepo\app.py
 Description: 李猴啊
 
@@ -66,17 +66,32 @@ def movie():
     # 获取当前页码，默认第1页
     page = int(request.args.get('page', 1))
     per_page = 10  # 每页显示的记录数
-    sql_count = 'SELECT COUNT(*) FROM movie250'
-    cur.execute(sql_count)
-    total_records = cur.fetchone()[0]  # 获取总记录数
+    
+    # 获取搜索关键词，如果有的话
+    search_query = request.args.get('search', '')
+
+    # 获取记录总数，根据是否有搜索关键词来选择查询条件
+    if search_query:
+        sql_count = 'SELECT COUNT(*) FROM movie250 WHERE cname LIKE ?'
+        cur.execute(sql_count, ('%' + search_query + '%',))  # 使用中文名进行模糊匹配
+    else:
+        sql_count = 'SELECT COUNT(*) FROM movie250'
+        cur.execute(sql_count)
+    
+    total_records = cur.fetchone()[0]  # 获取记录总数
 
     # 计算总页数
     total_pages = math.ceil(total_records / per_page)
 
-    # 获取当前页的数据
+    # 获取当前页的数据，根据是否有搜索关键词来选择查询条件
     offset = (page - 1) * per_page
-    sql = f'SELECT * FROM movie250 LIMIT {per_page} OFFSET {offset}'
-    data = cur.execute(sql)
+    if search_query:
+        sql = 'SELECT * FROM movie250 WHERE cname LIKE ? LIMIT ? OFFSET ?'
+        data = cur.execute(sql, ('%' + search_query + '%', per_page, offset))  # 使用中文名进行模糊匹配
+    else:
+        sql = 'SELECT * FROM movie250 LIMIT ? OFFSET ?'
+        data = cur.execute(sql, (per_page, offset))
+    
     for item in data:
         data_list.append(item)
 
@@ -90,6 +105,7 @@ def movie():
         page=page,
         total_pages=total_pages
     )
+
 
 @app.route("/score")
 def score():
