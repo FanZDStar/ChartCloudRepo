@@ -2,12 +2,15 @@
 Author: ourEDA MaMing
 Date: 2024-10-24 00:15:31
 LastEditors: ourEDA MaMing
-LastEditTime: 2024-12-02 10:10:21
-FilePath: \ChartCloudRepo\app.py
+LastEditTime: 2024-12-02 18:16:58
+FilePath: \ChartCloudRepo\app_copy.py
 Description: 李猴啊
 
 Copyright (c) 2024 by FanZDStar , All Rights Reserved. 
 '''
+
+#自行修改隐私内容
+
 from flask import Flask, render_template,request, jsonify, send_file
 import sqlite3
 import os
@@ -17,6 +20,8 @@ from wordcloud import WordCloud       #词云
 from PIL import Image                 #图片处理
 import numpy as np
 import math
+from flask_mail import Mail, Message
+import re
 
 app = Flask(__name__)
 
@@ -303,6 +308,57 @@ def location():
 @app.route("/ASCII")
 def ASCII():
     return render_template("ASCII.html")
+
+
+def is_valid_email(email):
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, email) is not None
+
+# 配置邮件服务器
+app.config['MAIL_SERVER'] = 'smtp.qq.com'  # QQ 邮箱 SMTP 服务器
+app.config['MAIL_PORT'] = 465  # 使用 SSL 加密时，端口是 465
+app.config['MAIL_USE_SSL'] = True  # 使用 SSL 加密
+app.config['MAIL_USERNAME'] = 'xxxxxx'  # 你的 QQ 邮箱地址
+app.config['MAIL_PASSWORD'] = 'xxxxxxxx'  # QQ 邮箱的授权码，而不是普通密码
+app.config['MAIL_DEFAULT_SENDER'] = '你的 QQ 邮箱地址'  # 默认发件人（可以和上面一样）
+mail = Mail(app)
+
+
+@app.route("/subscribe", methods=["POST"])
+def subscribe():
+    email = request.form.get("email")
+    #print(email)
+    #return jsonify({"message": "Subscription successful! A confirmation email has been sent."}), 200
+    if email:
+        # 使用自定义的正则表达式验证邮箱
+        if not is_valid_email(email):
+            return jsonify({"error": "Invalid email address format."}), 400
+
+        try:
+            # 创建邮件内容
+            msg = Message("Nice to meet you!",
+                          recipients=[email])
+            msg.body = """
+                Hello,
+
+                Thank you for subscribing to MaMing! We’re glad to have you on board.
+
+                Stay tuned for updates, news, and insights on movie data.
+
+                Best regards,
+                MaMing 
+            """
+
+            
+            # 发送邮件
+            mail.send(msg)
+            return jsonify({"message": "Subscription successful! A confirmation email has been sent."}), 200
+        except Exception as e:
+            return jsonify({"error": f"An error occurred while sending the email: {str(e)}"}), 500
+    else:
+        return jsonify({"error": "Please provide a valid email address."}), 400
+
+
 
 
 if __name__ == '__main__':
