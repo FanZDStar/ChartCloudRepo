@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>豆瓣电影数据分析网</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="../static/assets/img/favicon.png" rel="icon">
+    <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,600,600i,700,700i,900" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="../static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="../static/assets/vendor/aos/aos.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="../static/assets/css/style.css" rel="stylesheet">
+
+    <!-- Leaflet CSS for OpenStreetMap -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <style>
+        /* 设置背景和字体颜色 */
+        body {
+            background-color: #f4f4f4;
+            font-family: "Courier New", monospace;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        #ascii-art {
+            white-space: pre-wrap;
+            font-size: 6px;
+            line-height: 8px;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            margin-top: 30px;
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+        }
+
+        #image-preview {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header">
+        <div class="container">
+            <div class="logo float-left">
+                <h1 class="text-light"><a href="index.html"><span>MaMing</span></a></h1>
+            </div>
+            <nav class="nav-menu float-right d-none d-lg-block">
+                <ul>
+                    <li><a href="/index">←返回首页</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ======= ASCII 艺术生成器 ======= -->
+    <div class="container">
+        <h2 class="text-center">ASCII 艺术生成器</h2>
+
+        <!-- 图像上传区 -->
+        <div class="upload-section">
+            <input type="file" id="image-upload" accept="image/*" class="form-control">
+            <button id="generate-btn" class="btn btn-primary mt-3">生成 ASCII 艺术</button>
+        </div>
+
+        <!-- 图像预览 -->
+        <div id="image-preview"></div>
+
+        <!-- 显示 ASCII 艺术 -->
+        <div id="ascii-art"></div>
+    </div>
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="text-center py-4">
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright <strong><span>MaMing</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                Designed by <a href="https://bootstrapmade.com/">Bootstrap</a>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="../static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/assets/vendor/aos/aos.js"></script>
+
+    <!-- ASCII 艺术生成器的 JavaScript -->
+    <script>
+        // 定义 ASCII 字符集（从暗到亮）
+        const asciiChars = "@#S%?*+;:,. ";
+
+        // 处理图像并生成 ASCII 艺术
+        function generateAsciiArt(imageData) {
+            const width = imageData.width;
+            const height = imageData.height;
+            let asciiArt = '';
+            
+            for (let y = 0; y < height; y += 6) { // 每6个像素处理一行
+                let line = '';
+                for (let x = 0; x < width; x += 3) { // 每3个像素处理一列
+                    const pixelIndex = (y * width + x) * 4;
+                    const r = imageData.data[pixelIndex];
+                    const g = imageData.data[pixelIndex + 1];
+                    const b = imageData.data[pixelIndex + 2];
+                    const brightness = 0.3 * r + 0.59 * g + 0.11 * b; // 使用亮度公式计算灰度值
+                    const charIndex = Math.floor(brightness / 255 * (asciiChars.length - 1));
+                    line += asciiChars[charIndex]; // 选择合适的 ASCII 字符
+                }
+                asciiArt += line + '\n';
+            }
+            return asciiArt;
+        }
+
+        // 上传图像并显示预览
+        document.getElementById('image-upload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    document.getElementById('image-preview').innerHTML = '<img src="' + img.src + '" class="img-fluid">';
+                };
+            }
+        });
+
+        // 点击生成 ASCII 艺术
+        document.getElementById('generate-btn').addEventListener('click', function () {
+            const img = document.querySelector('#image-preview img');
+            if (img) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const asciiArt = generateAsciiArt(imageData);
+                document.getElementById('ascii-art').textContent = asciiArt;
+            } else {
+                alert("请先上传一张图片！");
+            }
+        });
+    </script>
+
+    <!-- Template Main JS File -->
+    <script src="../static/assets/js/main.js"></script>
+
+</body>
+
+</html>
